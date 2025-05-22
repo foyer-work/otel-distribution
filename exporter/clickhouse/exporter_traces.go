@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ClickHouse/clickhouse-go/v2"
 	_ "github.com/ClickHouse/clickhouse-go/v2" // For register database driver.
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/pdata/ptrace"
@@ -125,7 +124,7 @@ func (e *tracesExporter) pushTraceData(ctx context.Context, td ptrace.Traces) er
 	return err
 }
 
-func convertEvents(events ptrace.SpanEventSlice) (times []time.Time, names []string, attrs []*clickhouse.JSON) {
+func convertEvents(events ptrace.SpanEventSlice) (times []time.Time, names []string, attrs []string) {
 	for i := range events.Len() {
 		event := events.At(i)
 		times = append(times, event.Timestamp().AsTime())
@@ -135,7 +134,7 @@ func convertEvents(events ptrace.SpanEventSlice) (times []time.Time, names []str
 	return
 }
 
-func convertLinks(links ptrace.SpanLinkSlice) (traceIDs []string, spanIDs []string, states []string, attrs []*clickhouse.JSON) {
+func convertLinks(links ptrace.SpanLinkSlice) (traceIDs []string, spanIDs []string, states []string, attrs []string) {
 	for i := range links.Len() {
 		link := links.At(i)
 		traceIDs = append(traceIDs, internal.TraceIDToHexOrEmptyString(link.TraceID()))

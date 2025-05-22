@@ -6,6 +6,7 @@ package internal // import "github.com/foyer-work/otel-distribution/exporter/cli
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -165,12 +166,13 @@ func getValue(intValue int64, floatValue float64, dataType any) float64 {
 	}
 }
 
-func AttributesToJSON(attributes pcommon.Map) *clickhouse.JSON {
-	jsn := clickhouse.NewJSON()
+func AttributesToJSON(attributes pcommon.Map) string {
+	rawMap := make(map[string]any, attributes.Len())
 	for k, v := range attributes.All() {
-		jsn.SetValueAtPath(strings.ReplaceAll(k, ".", "_"), v.AsString())
+		rawMap[strings.ReplaceAll(k, ".", "_")] = v.AsRaw()
 	}
-	return jsn
+	jsonString, _ := json.Marshal(rawMap)
+	return string(jsonString)
 }
 
 func GetServiceName(resAttr pcommon.Map) string {
