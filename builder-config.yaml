@@ -1,0 +1,22 @@
+dist:
+  module: github.com/foyer-work/otel-distribution
+  name: foyer-otel
+  description: Modified Minimal OTel Collector distribution for Foyer
+  output_path: ./_build
+
+exporters:
+  # - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.126.0
+  - gomod: github.com/foyer-work/otel-distribution/exporter/clickhouse main
+
+processors:
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.126.0
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.126.0
+
+receivers:
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.126.0
+
+providers:
+  - gomod: go.opentelemetry.io/collector/confmap/provider/fileprovider v1.32.0
+
+connector:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/connector/spanmetricsconnector v0.126.0
